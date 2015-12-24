@@ -1,0 +1,147 @@
+shelldesign
+
+-------------------------------USEFUL LINKS------------------------------------
+
+How do I find linux environment variable value using C or C++?
+	http://www0.cs.ucl.ac.uk/staff/ucacbbl/getenv/
+
+Example of getOpt(function to accept command line options)
+	http://www.gnu.org/software/libc/manual/html_node/Example-of-Getopt.html
+
+Executing a command with execvpe in C
+	http://stackoverflow.com/questions/28313542/executing-a-command-with-execvpe-in-c
+
+Example using fork, execv, and wait
+	http://www.cs.ecu.edu/karl/4630/spr01/example1.html
+
+List of exec functions to execute a file
+	http://www.gnu.org/software/libc/manual/html_node/Executing-a-File.html
+
+Exit codes
+	http://tldp.org/LDP/abs/html/exitcodes.html
+
+Redirection
+	http://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO-3.html
+
+Cleanups on exit
+	http://www.gnu.org/software/libc/manual/html_node/Cleanups-on-Exit.html
+____________________________________________PART ONE________________________________
+
+do not reimplement existing binaries 
+stdin input 
+output to stdout and stderr
+
+good to know
+	fork(2), clone(2), execve(2), wait(2)
+
+use str* functions to do work
+
+use any system calls or labrary calls OTHER THAN system(3)
+	NEVER USE SYSTEM
+
+paths linux uses to automatically search bins is stored in PATH
+	do not reimplement BINS
+	printenv - environment variables to inspect	
+
+use stat syscall to check if file exists, not relying on EXEC to fail
+	can use any exec variant for code
+
+environment variables are passed through envp argument to main
+	parse to find programs and pass to child processes
+
+DO NOT execute function - built in
+
+----------------------------IMPLEMENT---------------------------------------
+
+
+Bugs: 
+- Arguments between quotes should be seen as one argument.
+
+
+
+Features:
+J - Variable support
+
+G - Basic commands
+
+J - redirection support
+
+G - Job control support
+
+J - time counting
+
+
+- Backspace
+
+* Tab
+
+* file globbing
+
+
+
+
+
+----------------------------FINISHED---------------------------------------
+G - 1 - shell is whitespace insensitive
+	" " == "       "
+
+G - backspace issue
+
+G - 2 - do not clear characters if backspace is pressed
+		rewrite command on newline without missing char
+
+J - 4 - if user presses enter key and shell cannot eval command let user know
+		[commandtyped]: command not found
+
+J - 5 - before waiting for input, write "[current_dir] 320sh>" to screen
+	after each command completes, should print "[current_dir] 320sh>" as well
+	where current_dir is current directory
+
+J - 6 - use PATH env var to search for commands
+	handle cases where command is not found
+
+  - program recognizes -d flag and no other.
+
+G - 7 - simple command parsing in shell
+		const char* s = getenv("PATH");
+
+G - 8 - should handle "cd ." and "cd .."
+	directory handles these names by typing "ls -a"
+
+G - 9 - must support built in command "cd", "exit", "pwd", "ls"
+	change directory using "chdir(2) syscall"
+	password via "getcwd(3)" to print current working dir
+
+
+J - 10 -print output as it arrives, do not buffer it
+	if user types input that does to command running currently via stdin, send immediately (do not wait for newline)
+
+11- test by running your hw1 and hw2
+	current working dir affects environment variable implementation (c word dir valid in PATH)
+
+ -if started with -d display debugging info to stderr
+	every command executed should say "RUNNING: [cmd]"
+		cmd is the command
+	every time command ends say "ENDED: cmd (ret=%d)"
+		show exit status (errno?)
+
+G - scripting support
+
+G - Up/down
+
+------------------------------DEBUGGER-------------------------------------------
+
+
+---------------------------------VARIABLES AND ECHO SUPPORT-------------------------
+add variables - all to start with "$"
+	have alphanumerical names or single "special" character
+	terminted by space or newline
+
+add environment variables and variable to store return code "($?)"
+
+variable can be used in command and shell will replace variable with the value of variable
+
+user can assign new value to valirable (environment variables included)
+	add ariable support (320sh)
+	test with printenv(prints all env var and their values)
+	can treat all variables as environment variables

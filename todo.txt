@@ -1,0 +1,136 @@
+
+Split input using space as delimeter unless it is within quotes
+http://stackoverflow.com/questions/7804335/split-string-on-spaces-in-java-except-if-between-quotes-i-e-treat-hello-wor
+
+http://www.gnu.org/software/libc/manual/html_node/Regular-Expressions.html
+
+--------------------------------------------------------------------------------
+
+Backspace support
+
+- backspace should reprint prompt + current input (minus last char) on the next line
+- this is needed for commands that take input char by char without needing a new line
+
+--------------------------------------------------------------------------------
+
+Variable support
+
+- echo $variable should work properly
+
+- use map/list to store variables. This way, environments variables that are modifed in the shell do not affect the actual machine's environment variables.
+	ex:
+	PATH
+	PS1 		( set to [path] 320sh> )
+	HOME
+	USER
+	? 			( maps to return code. should be modified ever ytime.)
+
+- when a new variable is declared using 'set', add it to the map.
+
+- at exit, make sure to free the map
+	http://www.gnu.org/software/libc/manual/html_node/Cleanups-on-Exit.html
+
+- If user changes the PATH, we must ensure that the new PATH value is used.
+	- when program starts, map PATH to getenv("PATH").
+	- whenever a variable is modified, replace it in the table.
+
+--------------------------------------------------------------------------------
+
+Basic commands
+
+- history 		-done
+- clear-history -done
+- exit 			-done
+- jobs			display list of jobs
+- fg 									NEED_JOB_SUPPORT
+- bg 									NEED_JOB_SUPPORT
+- kill
+- cd usin chdir		-done
+- cd - 				- done				should change to the last directory the user was in
+- cd .				- finished
+- cd ..				- finished
+- pwd using getcwd	- done
+
+- Ctrl+C 			-done
+http://stackoverflow.com/questions/4217037/catch-ctrl-c-in-c
+
+- Ctrl+Z
+http://stackoverflow.com/questions/4891214/how-to-handle-the-signal-ctrl-z-in-mini-shell-c
+
+--------------------------------------------------------------------------------
+
+Scripting Support - DONE
+
+- support for running scripts using just ./scriptname
+- use #!/home/joon/Dropbox/school/2015 Fall/CSE 320/DjangoUnchained_OnWeekends/320sh
+
+- scripts should be able to have comments. #
+
+--------------------------------------------------------------------------------
+
+Redirection Support < > | 2>
+
+using open, close, read, write, dup/dup2
+- create file commands in utils.h
+
+http://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO-3.html
+
+- > redirect stdout to file.
+- < redirect stdin to file
+- 2> redirect stderr to file
+- 1>&2 redirect stdout to stderr
+- 2>&1 redirect stderr to stdout
+
+
+- must identify that these characters are in input, and react appropriately
+
+- echo hey > file.txt	output 'hey' to file.txt.
+						if file.txt does not exist, create it
+- cat < file.txt 		take input from file.txt.
+						if file.txt does not exist:
+						320sh: file.txt: No such file or directory
+
+--------------------------------------------------------------------------------
+
+Job Control Support (pausing and resuming)
+
+launch shell with ./launcher.sh
+
+- command & should execute the command in the bg
+- 
+ex: 
+./infiniteloop &
+[1] (9723) ./infiniteloop &
+./infiniteloop &
+[2] (9724) ./infiniteloop &
+
+- 'jobs' should list all bg running jobs, their name, PID, job number, status(running or suspended)
+	- also print the exit status code of bg jobs that just ended.
+
+fg JID
+- make specified job number in list go to the foreground and resume execution (SIGCONT)
+ex: fg 3
+
+- Ctrl + z should cause SIGTSTP
+
+--------------------------------------------------------------------------------
+
+Keeping history
+
+- use up and down arrows to cycle through a circular buffer of previous commands
+
+use $HOME to figure out home directory
+and save history in $HOME/.320sh_history so it can be later referenced whenever the program exits and starts.
+
+HISTORY_MAX = 50
+
+easy extra credit(5):
+- built-in command 'history' and 'clear-history'
+
+--------------------------------------------------------------------------------
+
+
+
+- exec commands
+- regex for strings
+- backspace / up down
